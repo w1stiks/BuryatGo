@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BuryatGo</string>
+    <string name="channel_name">Ежедневные напоминания</string>
+    <string name="channel_desc">Напоминания о занятиях и ударной серии</string>
+</resources>

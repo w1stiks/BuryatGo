@@ -1,0 +1,19 @@
+{
+  "appId": "com.buryatgo.app",
+  "appName": "BuryatGo",
+  "webDir": "android/app/src/main/assets/www",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#FFFFFF",
+    "scheme": "BuryatGo"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "iconColor": "#58CC02"
+    },
+    "SplashScreen": {
+      "launchShowDuration": 600,
+      "backgroundColor": "#58CC02"
+    }
+  }
+}

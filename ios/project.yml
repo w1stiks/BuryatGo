@@ -1,0 +1,53 @@
+name: BuryatGo
+options:
+  bundleIdPrefix: com.buryatgo
+  deploymentTarget:
+    iOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "14.0"
+targets:
+  BuryatGo:
+    type: application
+    platform: iOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: BuryatGo
+      - path: ../android/app/src/main/assets/www
+        type: folder
+        buildPhase: resources
+    info:
+      path: BuryatGo/Info.plist
+      properties:
+        CFBundleDisplayName: BuryatGo
+        CFBundleName: BuryatGo
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        LSRequiresIPhoneOS: true
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UIRequiresFullScreen: true
+        UIStatusBarStyle: UIStatusBarStyleLightContent
+        UIViewControllerBasedStatusBarAppearance: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+        UIBackgroundModes:
+          - audio
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.buryatgo.app
+        PRODUCT_NAME: BuryatGo
+        MARKETING_VERSION: "1.8.3"
+        CURRENT_PROJECT_VERSION: "183"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_BITCODE: "NO"
+        GENERATE_INFOPLIST_FILE: "NO"
+        CODE_SIGN_STYLE: Automatic
+    scheme: {}
