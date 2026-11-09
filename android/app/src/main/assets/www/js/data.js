@@ -396,7 +396,8 @@ window.BG_DATA = (function () {
     { id: 'duulga',       slot: 'hat',    name: 'Шлем батора',        price: 750, color: '#ADB5BD', desc: 'Стальной дуулга с красным плюмажем' },
     { id: 'crown',        slot: 'hat',    name: 'Корона батора',      price: 900, color: '#F2B705', premiumOnly: true, desc: 'Эксклюзив BuryatGo Super' },
     { id: 'flag_rb',      slot: 'hand',   name: 'Флажок Бурятии',    price: 120, desc: 'Синий, белый, жёлтый и знак Соёмбо' },
-    { id: 'tea',          slot: 'hand',   name: 'Пиала чая',          price: 50,  desc: 'Бурятский чай с молоком — сагаан сай' },
+    { id: 'tea',          slot: 'hand',   name: 'Пиала чая',          price: 50,  cup: true, desc: 'Бурятский чай с молоком — сагаан сай. Нажмите на Бато — он совершит обряд брызганья' },
+    { id: 'milk',         slot: 'hand',   name: 'Пиала молока',       price: 60,  cup: true, desc: 'Сагаан эдеэ — белая пища, символ чистоты. Нажмите на Бато — он совершит обряд брызганья' },
     { id: 'buuza_plate',  slot: 'hand',   name: 'Тарелка бууз',      price: 100, desc: 'Горячие буузы с пылу с жару' },
     { id: 'drum',         slot: 'hand',   name: 'Бубен хэнгэрэг',  price: 280, desc: 'Традиционный ударный инструмент' },
     { id: 'scarf',        slot: 'acc',    name: 'Шарф',               price: 60 },
@@ -415,7 +416,20 @@ window.BG_DATA = (function () {
     { id: 'sneakers',     slot: 'feet',   cat: 'outfit', name: 'Кроссовки',  price: 90,  color: '#FFFFFF' },
     { id: 'unty',         slot: 'feet',   cat: 'outfit', name: 'Унты',        price: 350, color: '#7A4A21', desc: 'Традиционные меховые сапоги с орнаментом' },
     { id: 'unty_fest',    slot: 'feet',   cat: 'outfit', name: 'Праздничные унты', price: 600, color: '#A61E4D', desc: 'Нарядные унты с золотым узором' },
-    { id: 'freeze',       slot: 'bonus',  name: 'Заморозка серии',    price: 200, consumable: true, desc: 'Сохранит ударный режим, если пропустите один день' }
+    /* v1.13 */
+    { id: 'skates',       slot: 'feet',   cat: 'outfit', name: 'Коньки', price: 240, desc: 'Когда ручей замёрзнет — нажмите на лёд, и Бато покатается на коньках' },
+    { id: 'umbrella',     slot: 'hand',   name: 'Зонтик', price: 160, desc: 'В дождь Бато сам раскроет зонт и укроется под ним вместе с собакой' },
+    { id: 'dog_beanie',   slot: 'dhat',   cat: 'dogwear', dog: true, name: 'Вязаная шапочка', price: 70, desc: 'Тёплая шапочка с помпоном для собаки' },
+    { id: 'dog_ushanka',  slot: 'dhat',   cat: 'dogwear', dog: true, name: 'Собачья ушанка', price: 120, desc: 'Меховая ушанка — никакой мороз не страшен' },
+    { id: 'dog_malgai',   slot: 'dhat',   cat: 'dogwear', dog: true, name: 'Бурятский малгай', price: 150, desc: 'Настоящая шапка-малгай с красной далалгой' },
+    { id: 'dog_bandana',  slot: 'dacc',   cat: 'dogwear', dog: true, name: 'Бандана', price: 60, desc: 'Красная бандана в горошек на шею' },
+    { id: 'dog_glasses',  slot: 'dacc',   cat: 'dogwear', dog: true, name: 'Солнечные очки', price: 90, desc: 'Самая стильная собака степи' },
+    { id: 'dog_hadag',    slot: 'dacc',   cat: 'dogwear', dog: true, name: 'Голубой хадаг', price: 110, desc: 'Шарф-хадаг — символ уважения и чистых помыслов' },
+    { id: 'dog_sweater',  slot: 'dcoat',  cat: 'dogwear', dog: true, name: 'Тёплый свитер', price: 140, desc: 'Красный свитер с белым узором' },
+    { id: 'dog_raincoat', slot: 'dcoat',  cat: 'dogwear', dog: true, name: 'Дождевик', price: 120, desc: 'Яркий жёлтый дождевик для прогулок в непогоду' },
+    { id: 'dog_degel',    slot: 'dcoat',  cat: 'dogwear', dog: true, name: 'Дэгэл для собаки', price: 260, desc: 'Нарядный синий дэгэл с золотой отделкой' },
+    { id: 'freeze',       slot: 'bonus',  name: 'Заморозка серии',    price: 200, consumable: true, desc: 'Сохранит ударный режим, если пропустите один день' },
+    { id: 'revive',       slot: 'bonus',  name: 'Возрождение Огонька', price: 350, consumable: true, revive: true, icon: '❤️‍🔥', desc: 'Полностью возрождает потухший огонёк и спасает всю серию дней' },
   ];
 
   const slots = [
@@ -423,6 +437,7 @@ window.BG_DATA = (function () {
     { id: 'outfit', name: 'Одежда', icon: '👘' },
     { id: 'hand', name: 'В руку', icon: '🏹' },
     { id: 'acc', name: 'Аксессуары', icon: '🕶️' },
+    { id: 'dogwear', name: 'Одежда для собаки', icon: '🐕' },
     { id: 'bonus', name: 'Заморозки', icon: '🧊' }
   ];
 
@@ -457,6 +472,8 @@ window.BG_DATA = (function () {
   ];
 
   /* Кони для подписчиков Super (первый — в подарок, остальные за Буузы) */
+  /* v1.12: бесплатно только модули 1–3, модули 4–15 — по подписке Super */
+  units.forEach((u, i) => { u.premium = i >= 3; });
   const horses = [
     { id: 'horse_heer', name: 'Хээр', ru: 'рыжий конь', coat: '#B4622D', dark: '#8A4519', mane: '#3E1E0C', blaze: true,
       desc: 'Горячий рыжий конь с белой проточиной. Неутомим в долгих переходах по степи.' },
@@ -472,8 +489,16 @@ window.BG_DATA = (function () {
   units.forEach(u => u.lessons.forEach((l, li) => lessonIndex.push({ unit: u, lesson: l, li })));
 
   return {
-    words, units, items, itemsById, slots, horses, horsePrice: 1500, luckyHorsePrice: 1000, luckyHorseUnit: 5, horseSell: 750, sheepPrice: 250, sheepSell: 125, sheepMax: 13, leagues, botNames, mascotPhrases, achievements, lessonIndex,
-    prices: { month: 499, year: 5600 },
+    words, units, items, itemsById, slots, horses, horsePrice: 1500, luckyHorsePrice: 1000, luckyHorseUnit: 5, horseSell: 750, sheepPrice: 250, dogPrice: 250, kennelPrice: 300, horseCoatPrice: 400, wxSun: [180, 300], wxRain: [10, 20], wxSnow: [25, 40], wxMeltSec: 150, weekStreakBonus: 1000, sheepSell: 125, sheepMax: 13, leagues, botNames, mascotPhrases, achievements, lessonIndex,
+    prices: { lifetime: 999 },
+    /* Промокоды: код (большими буквами) -> награда. type 'super' — Super навсегда, 'buuza' — Буузы (amount).
+       Каждый код применяется один раз на аккаунт. Меняйте коды здесь перед публикацией в Instagram / MAX. */
+    promos: {
+      'BAYALIG': { type: 'super' },
+      'SAGAALGAN': { type: 'buuza', amount: 300 },
+      'SURKHARBAAN': { type: 'buuza', amount: 150 }
+    },
+    cupRefill: 15,
     premiumBonus: 500,
     /* Фонетическая запись для синтеза речи: на экране остаётся литературное написание,
        а голосовой движок получает текст, который звучит ближе к живому произношению. */

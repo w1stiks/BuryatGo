@@ -39,6 +39,11 @@ window.BG_STORE = (function () {
       premium: null,
       horses: { owned: [], main: null, freeUsed: false },
       pets: { sheep: 10, starter: true },
+      cups: {},
+      dog: null,            /* v1.12: { name, house } */
+      lostStreak: null,     /* v1.12: { n, day } — потухшая серия для «Возрождения Огонька» */
+      weekBonusDay: null,   /* v1.12: день последнего бонуса «Неделя огня» */
+      usedPromos: [],
       league: 0,
       week: { key: weekKey(), xp: 0 },
       pendingLeagueResult: null,
@@ -151,6 +156,7 @@ window.BG_STORE = (function () {
         api.save();
         return 'frozen';
       }
+      s.lostStreak = { n: s.streak, day: dayKey() };
       s.streak = 0;
       api.save();
       return 'lost';

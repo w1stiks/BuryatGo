@@ -241,6 +241,59 @@ window.BG_CLOUD = (function () {
     } catch (e) { /* нет сети — синхронизируемся позже */ }
   }
 
+  /* v1.14: живые игроки. Каждый вошедший игрок раз в минуту отмечается в коллекции presence/{uid};
+     список читается целиком. Правила Firestore: read — любому вошедшему, write — только владельцу. */
+  const presUrl = id => 'https://firestore.googleapis.com/v1/projects/' + encodeURIComponent(CFG.projectId) +
+    '/databases/(default)/documents/presence' + (id ? '/' + encodeURIComponent(id) : '');
+  let lastPing = 0;
+  async function ping(force) {
+    if (!configured() || !sess || !Store()) return false;
+    if (document.visibilityState === 'hidden') return false;
+    if (!force && Date.now() - lastPing < 50000) return false;
+    lastPing = Date.now();
+    const p = Store().playerSnapshot();
+    const t = await token();
+    const I = v => ({ integerValue: String(Math.max(0, Math.round(+v || 0))) });
+    const body = { fields: {
+      name: { stringValue: String(p.name || 'Ученик').slice(0, 24) },
+      xp: I(p.xp), weekXp: I(p.weekXp), league: I(p.league), streak: I(p.streak), lastSeen: I(Date.now()),
+      snap: { stringValue: JSON.stringify(p) }
+    } };
+    const { r } = await request(presUrl(sess.uid), {
+      method: 'PATCH', headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    });
+    return r.ok;
+  }
+  async function livePlayers() {
+    if (!configured()) throw fail('NOT_CONFIGURED');
+    if (!sess) throw fail('NO_SESSION');
+    const t = await token();
+    const out = [];
+    let page = '';
+    for (let i = 0; i < 6; i++) {
+      const { r, j } = await request(presUrl() + '?pageSize=300' + (page ? '&pageToken=' + encodeURIComponent(page) : ''),
+        { headers: { Authorization: 'Bearer ' + t } });
+      if (!r.ok) throw fail(errCode(j));
+      (j.documents || []).forEach(d => {
+        const f = d.fields || {}, uid = String(d.name || '').split('/').pop();
+        const num = k => parseInt((f[k] || {}).integerValue, 10) || 0;
+        let snap = {};
+        try { snap = JSON.parse((f.snap || {}).stringValue || '{}') || {}; } catch (e) { snap = {}; }
+        out.push(Object.assign({}, snap, {
+          id: snap.id || uid, uid, name: (f.name || {}).stringValue || snap.name || 'Ученик',
+          xp: num('xp'), weekXp: num('weekXp'), league: num('league'), streak: num('streak'), lastSeen: num('lastSeen'),
+          me: uid === sess.uid
+        }));
+      });
+      page = j.nextPageToken;
+      if (!page) break;
+    }
+    return { source: 'cloud', players: out };
+  }
+  setInterval(() => { ping().catch(() => {}); }, 60000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') ping(true).catch(() => {}); });
+  window.addEventListener('load', () => setTimeout(() => ping(true).catch(() => {}), 3000));
+
   window.addEventListener('online', () => { if (sess && sess.dirty) push().catch(() => {}); });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden' && sess && (timer || sess.dirty)) push(true).catch(() => {});
@@ -253,7 +306,7 @@ window.BG_CLOUD = (function () {
     user: () => (sess ? sess.login : null),
     syncedAt: () => (sess ? sess.syncedAt || 0 : 0),
     pending: () => !!(sess && (sess.dirty || timer)),
-    signUp, signIn, signOut, push, pull, schedule, startupSync,
+    signUp, signIn, signOut, push, pull, schedule, startupSync, ping, livePlayers,
     onChange(fn) { listeners.push(fn); }
   };
 })();

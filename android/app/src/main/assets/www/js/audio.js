@@ -85,7 +85,8 @@ window.BG_AUDIO = (function () {
   function ttsText(t) {
     return String(t).replace(/Һ/g, 'Х').replace(/һ/g, 'х').replace(/Ү/g, 'У').replace(/ү/g, 'у').replace(/Ө/g, 'О').replace(/ө/g, 'о');
   }
-  let recorded = null;
+  let recorded = null, playToken = 0;
+  const missingAudio = {};
   /* Два голоса: «Женский» (Irina — по умолчанию) и «Мужской» (Pavel). На Android — подбор среди установленных голосов. */
   const FEMALE = /irina|ирина|milena|милена|svetlana|светлана|dariya|дария|anna|анна|female|женск/i;
   const MALE = /pavel|павел|yuri|юрий|dmitr|дмитр|maxim|максим|\bmale|мужск/i;
@@ -113,9 +114,32 @@ window.BG_AUDIO = (function () {
   function speak(text, rate, audioFile, voice) {
     rate = rate || 0.85;
     const g = gender(voice);
-    if (audioFile) {
-      try { if (recorded) recorded.pause(); recorded = new Audio(audioFile); recorded.playbackRate = rate < 0.7 ? 0.75 : 1; recorded.play(); return; } catch (e) {}
+    let list = audioFile ? (Array.isArray(audioFile) ? audioFile : [audioFile]) : [];
+    list = list.filter(f => f && !missingAudio[f]);
+    if (list.length) {
+      const token = ++playToken;
+      const tryAt = i => {
+        if (token !== playToken) return;
+        if (i >= list.length) { synth(text, rate, g); return; }
+        const f = list[i];
+        let done = false;
+        const next = () => { if (done) return; done = true; missingAudio[f] = true; tryAt(i + 1); };
+        try {
+          if (recorded) { recorded.onerror = null; recorded.pause(); }
+          const el = new Audio(f);
+          recorded = el;
+          el.playbackRate = rate < 0.7 ? 0.75 : 1;
+          el.onerror = next;
+          const pr = el.play();
+          if (pr && pr.catch) pr.catch(err => { if (err && err.name === 'NotAllowedError') { done = true; return; } next(); });
+        } catch (e) { next(); }
+      };
+      tryAt(0);
+      return;
     }
+    synth(text, rate, g);
+  }
+  function synth(text, rate, g) {
     const t = ttsText(text);
     try {
       const b = window.AndroidBridge;

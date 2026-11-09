@@ -11,8 +11,8 @@ android {
         applicationId = "com.buryatgo.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 19
-        versionName = "1.9"
+        versionCode = 24
+        versionName = "1.14"
     }
 
     buildTypes {

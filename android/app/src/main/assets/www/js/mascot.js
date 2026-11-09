@@ -28,8 +28,10 @@ window.BG_MASCOT = (function () {
       case 'ushanka':
         return `<rect x="41" y="60" width="18" height="40" rx="9" fill="#D9C7B0"/>
           <rect x="141" y="60" width="18" height="40" rx="9" fill="#D9C7B0"/>
-          <path d="M53 60 Q55 20 100 20 Q145 20 147 60 Z" fill="${h.color}"/>
-          <path d="M48 56 Q100 38 152 56 L152 70 Q100 54 48 70 Z" fill="#E6D7C3"/>`;
+          <path d="M53 56 Q55 18 100 18 Q145 18 147 56 Z" fill="${h.color}"/>
+          <path d="M48 52 Q100 34 152 52 L152 62 Q100 45 48 62 Z" fill="#E6D7C3"/>
+          <path d="M50 61 Q100 44 150 61" stroke="#E6D7C3" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round" stroke-dasharray="2.5 3"/>
+          <path d="M58 50 Q100 37 142 50" stroke="rgba(160,135,105,.35)" stroke-width="1.4" fill="none"/>`;
       case 'malgai_blue':
       case 'malgai_gold': {
         const brim = h.id === 'malgai_gold' ? '#7A1F1F' : '#2A2A35';
@@ -130,7 +132,17 @@ window.BG_MASCOT = (function () {
 
   /* Предметы в руке: рисуются относительно кисти (0,0) и находятся снаружи от туловища.
      over: true — предмет лежит поверх ладони (тарелка, хадак), иначе кисть обхватывает предмет. */
-  function handSvg(h) {
+  function cupSvg(liquid, empty, rim) {
+    const steam = (pts) => `<path d="${pts}" stroke="rgba(150,165,190,.75)" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+    return `${empty || !rim ? '' : steam('M17 -18 q-4 -6 0 -12 q4 -6 0 -12') + steam('M26 -18 q-3 -5 0 -10')}
+        <path d="M8 -6 q-10 0 -10 7 q0 7 10 6" stroke="#1E6BC6" stroke-width="3" fill="none"/>
+        <path d="M7 -13 H35 Q34 8 21 10 Q8 8 7 -13 Z" fill="#FFFFFF" stroke="#1E6BC6" stroke-width="2.4"/>
+        <path d="M9 -6 H33" stroke="#F2B705" stroke-width="3"/>
+        <ellipse class="m-cup-in" cx="21" cy="-13" rx="14" ry="3.2" fill="${empty ? '#EEF3FA' : liquid}" stroke="#1E6BC6" stroke-width="1.6"/>
+        ${empty ? '<path d="M12 -12.4 Q21 -10.6 30 -12.4" stroke="#C9D6E8" stroke-width="1.2" fill="none"/>' : ''}
+        <ellipse cx="21" cy="12" rx="17" ry="3" fill="#E7F0FB" stroke="#1E6BC6" stroke-width="1.6"/>`;
+  }
+  function handSvg(h, empty) {
     if (!h) return null;
     const steam = (pts) => `<path d="${pts}" stroke="rgba(150,165,190,.75)" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
     switch (h.id) {
@@ -143,7 +155,10 @@ window.BG_MASCOT = (function () {
         <path d="M3.5 -68 L3.5 50 M6 -68 L6 50" stroke="#F1E0C5" stroke-width="1"/>` };
       case 'flag_rb': return { svg: `<path d="M2 -86 L2 40" stroke="#8B5A2B" stroke-width="4" stroke-linecap="round"/><circle cx="2" cy="-87" r="4" fill="#F2B705"/>
         <g class="m-flag">${flagRect(4, -84, 40)}</g>` };
-      case 'tea': return { svg: `${steam('M17 -18 q-4 -6 0 -12 q4 -6 0 -12')}${steam('M26 -18 q-3 -5 0 -10')}
+      case 'umbrella': return { svg: `<g class="m-umb"><path d="M4 10Q8 22 -2 24Q-8 24 -9 18" stroke="#5B3A1E" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M4 10L-56 -146" stroke="#5B3A1E" stroke-width="4" stroke-linecap="round"/><g transform="translate(-58 -150) rotate(-22)"><path d="M-92 0Q-90 -64 0 -68Q90 -64 92 0Q77 -12 61 0Q46 -12 31 0Q15 -12 0 0Q-15 -12 -31 0Q-46 -12 -61 0Q-77 -12 -92 0Z" fill="#E03131"/><path d="M-61 0Q-52 -52 0 -68Q-28 -40 -31 0Q-46 -12 -61 0ZM31 0Q28 -40 0 -68Q52 -52 61 0Q46 -12 31 0Z" fill="#F2B705"/><path d="M0 -68V0" stroke="rgba(0,0,0,.18)" stroke-width="1.2"/><circle cx="0" cy="-70" r="4" fill="#5B3A1E"/></g></g>` };
+      case 'tea': return { svg: cupSvg('#E2C597', empty, true) };
+      case 'milk': return { svg: cupSvg('#FFFDF5', empty, false) };
+      case 'tea_old': return { svg: `${steam('M17 -18 q-4 -6 0 -12 q4 -6 0 -12')}${steam('M26 -18 q-3 -5 0 -10')}
         <path d="M8 -6 q-10 0 -10 7 q0 7 10 6" stroke="#1E6BC6" stroke-width="3" fill="none"/>
         <path d="M7 -13 H35 Q34 8 21 10 Q8 8 7 -13 Z" fill="#FFFFFF" stroke="#1E6BC6" stroke-width="2.4"/>
         <path d="M9 -6 H33" stroke="#F2B705" stroke-width="3"/><ellipse cx="21" cy="-13" rx="14" ry="3.2" fill="#E2C597" stroke="#1E6BC6" stroke-width="1.6"/>
@@ -163,6 +178,12 @@ window.BG_MASCOT = (function () {
 
   /* Обувь: унты (меховые сапоги с загнутым носком и орнаментом) и кроссовки */
   function feetSvg(f) {
+    if (f.id === 'skates') {
+      const one = `<path d="M75 198 H96 V224 Q96 228 92 228 H72 Q67 228 67 223 Q67 216 75 213 Z" fill="#F8F9FA" stroke="#868E96" stroke-width="1.4"/>
+        <path d="M78 203 h14 M78 208 h14 M78 213 h14" stroke="#E03131" stroke-width="1.6"/><path d="M74 198 H97" stroke="#1E6BC6" stroke-width="3"/>
+        <path d="M72 228V233M92 228V233" stroke="#868E96" stroke-width="2"/><path d="M64 234 H98 Q102 234 101 230" stroke="#CED4DA" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+      return `${one}<g transform="translate(200 0) scale(-1 1)">${one}</g>`;
+    }
     if (f.id === 'sneakers') {
       const one = `<path d="M74 214 H97 V224 Q97 229 92 229 H74 Q68 229 68 223 Q68 214 74 214 Z" fill="#FFFFFF" stroke="#ADB5BD" stroke-width="1.5"/>
         <path d="M72 226 H97" stroke="#1E6BC6" stroke-width="3"/><path d="M80 219 l6 -3 M84 221 l6 -3" stroke="#E03131" stroke-width="2"/>`;
@@ -196,7 +217,7 @@ window.BG_MASCOT = (function () {
   }
   /* v1.8: кушак / пояс поверх любой одежды */
   /* v1.8.1: головные уборы, при которых брови видны */
-  const BROWS_OK = ['cap', 'headband', 'straw'];
+  const BROWS_OK = ['cap', 'headband', 'straw', 'ushanka'];
   function beltSvg(b, robe) {
     if (!b) return '';
     const c = b.color, by = robe ? 160 : 170;
@@ -279,7 +300,8 @@ window.BG_MASCOT = (function () {
     const sleeve = out.style === 'vest' ? (out.shirt || '#FBF4E6') : out.color;
     const cuffC = out.style === 'degel' ? (out.trim || '#FFD43B') : (out.dark || 'rgba(0,0,0,.16)');
     const robe = out.style === 'degel';
-    const held = handSvg(hand);
+    const cupEmpty = !!(hand && hand.cup && !opts.full && typeof api.cupEmpty === 'function' && api.cupEmpty(hand.id));
+    const held = handSvg(hand, cupEmpty);
     const mood = opts.mood || 'normal';
     const mouth = mood === 'happy'
       ? `<path d="M87 100Q100 118 113 100Z" fill="#8F2D2D"/><path d="M93 109Q100 114 107 109" fill="#FF8787"/><path d="M89 100.5H111" stroke="#fff" stroke-width="2.2" opacity=".85"/>`
@@ -307,7 +329,7 @@ window.BG_MASCOT = (function () {
     const armR = held
       ? armSvg('M130 128Q149 140 152 157', 'M151.3 151L152.6 159.5', 154, 166, sleeve, cuffC, -1)
       : armSvg('M130 128Q143 146 144 166', 'M143.6 159L144 168', 144, 175, sleeve, cuffC, -1);
-    const heldSvg = held ? `<g transform="translate(154 166)">${held.svg}</g>` : '';
+    const heldSvg = held ? `<g class="m-held" transform="translate(154 166)">${held.svg}</g>` : '';
     const coverHair = !!(hat && ['malgai_blue', 'malgai_gold', 'ushanka', 'beanie', 'fox_hat', 'toortsog', 'hasarta', 'duulga', 'newyear', 'straw'].indexOf(hat.id) >= 0);
     const hair = coverHair ? '' : `<path d="M55 72 Q57 30 100 30 Q143 30 145 72 Q132 52 114 57 Q102 46 88 57 Q70 52 55 72 Z" fill="${HAIR}"/>`;
 
@@ -340,6 +362,7 @@ window.BG_MASCOT = (function () {
           <ellipse cx="70" cy="99" rx="9" ry="6" fill="#FF8A8A" opacity=".5"/><ellipse cx="130" cy="99" rx="9" ry="6" fill="#FF8A8A" opacity=".5"/>
           ${mouth}
           ${accSvg(acc)}
+          <g class="m-back"><circle cx="100" cy="78" r="47" fill="${HAIR}"/><path d="M70 60 Q100 44 130 60 M66 80 Q100 66 134 80 M72 102 Q100 92 128 102" stroke="rgba(255,255,255,.12)" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M88 122 Q100 128 112 122" stroke="${HAIR}" stroke-width="7" fill="none" stroke-linecap="round"/></g>
           ${hatSvg(hat)}
         </g>
       </g>
@@ -353,8 +376,9 @@ window.BG_MASCOT = (function () {
     if (it.slot === 'bonus') return `<div class="bonus-icon">🧊</div>`;
     const eq = { hat: null, outfit: 'tshirt_green', feet: null, hand: null, acc: null, belt: null };
     eq[it.slot] = it.id;
-    return svg(eq, { cls: 'mini' });
+    return svg(eq, { cls: 'mini', full: true });
   }
 
-  return { svg, preview, soyombo, flagRect };
+  const api = { svg, preview, soyombo, flagRect, cupEmpty: null };
+  return api;
 })();
